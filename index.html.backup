@@ -3,9 +3,118 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UnlockMyLead - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .glow-button { transition: all 0.3s ease; }
+        .glow-button:hover { box-shadow: 0 0 15px rgba(226, 114, 91, 0.5); transform: translateY(-2px); }
+    </style>
+</head>
+<body class="bg-[#111A3E] text-white antialiased flex items-center justify-center min-h-screen">
+    <div id="authContainer" class="flex items-center justify-center min-h-screen w-full">
+        <div class="bg-[#192350] p-8 md:p-12 rounded-2xl shadow-2xl w-full max-w-md border border-gray-700">
+            <div id="loginFormContainer">
+                <h2 class="text-4xl font-extrabold text-white text-center mb-2">Unlock</h2>
+                <h3 class="text-xl font-bold text-white text-center mb-8">Sign In</h3>
+                <form id="loginForm" class="space-y-6">
+                    <div>
+                        <label for="loginEmail" class="block text-sm font-medium text-gray-400">Email Address</label>
+                        <input type="email" id="loginEmail" name="loginEmail" required class="mt-1 w-full px-4 py-3 rounded-lg border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-[#E2725B] transition duration-200">
+                    </div>
+                    <div>
+                        <label for="loginPassword" class="block text-sm font-medium text-gray-400">Password</label>
+                        <input type="password" id="loginPassword" name="loginPassword" required class="mt-1 w-full px-4 py-3 rounded-lg border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-[#E2725B] transition duration-200">
+                    </div>
+                    <div id="loginError" class="text-red-400 text-sm text-center hidden"></div>
+                    <button type="submit" class="glow-button w-full px-6 py-3 rounded-lg font-bold bg-[#E2725B] hover:bg-[#C86650] text-white transition-colors duration-300">Sign In</button>
+                </form>
+                <p class="mt-6 text-center text-gray-400">Don't have an account? <a href="#" id="showSignupLink" class="font-bold text-[#E2725B] hover:underline">Sign Up</a></p>
+            </div>
+            <div id="signupFormContainer" class="hidden">
+                <h2 class="text-4xl font-extrabold text-white text-center mb-2">Unlock</h2>
+                <h3 class="text-xl font-bold text-white text-center mb-8">Create an Account</h3>
+                <form id="signupForm" class="space-y-6">
+                    <div>
+                        <label for="signupEmail" class="block text-sm font-medium text-gray-400">Email Address</label>
+                        <input type="email" id="signupEmail" name="signupEmail" required class="mt-1 w-full px-4 py-3 rounded-lg border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-[#E2725B] transition duration-200">
+                    </div>
+                    <div>
+                        <label for="signupPassword" class="block text-sm font-medium text-gray-400">Password</label>
+                        <input type="password" id="signupPassword" name="signupPassword" required class="mt-1 w-full px-4 py-3 rounded-lg border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-[#E2725B] transition duration-200">
+                    </div>
+                    <div id="signupError" class="text-red-400 text-sm text-center hidden"></div>
+                    <button type="submit" class="glow-button w-full px-6 py-3 rounded-lg font-bold bg-[#E2725B] hover:bg-[#C86650] text-white transition-colors duration-300">Sign Up</button>
+                </form>
+                <p class="mt-6 text-center text-gray-400">Already have an account? <a href="#" id="showLoginLink" class="font-bold text-[#E2725B] hover:underline">Sign In</a></p>
+            </div>
+        </div>
+    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        const firebaseConfig = {
+            apiKey: "AIzaSyD9NMfbtY762cSdlA6zpvkpTJv4u4M0QyE",
+            authDomain: "unlock-my-lead.firebaseapp.com",
+            projectId: "unlock-my-lead",
+            storageBucket: "unlock-my-lead.appspot.com",
+            messagingSenderId: "563964438316",
+            appId: "1:563964438316:web:11c34a938166d123e4d94d"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        onAuthStateChanged(auth, user => { if (user) window.location.href = '/dashboard.html'; });
+        document.getElementById('showSignupLink').addEventListener('click', e => {
+            e.preventDefault();
+            document.getElementById('loginFormContainer').classList.add('hidden');
+            document.getElementById('signupFormContainer').classList.remove('hidden');
+        });
+        document.getElementById('showLoginLink').addEventListener('click', e => {
+            e.preventDefault();
+            document.getElementById('signupFormContainer').classList.add('hidden');
+            document.getElementById('loginFormContainer').classList.remove('hidden');
+        });
+        document.getElementById('signupForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const email = e.target.signupEmail.value;
+            const password = e.target.signupPassword.value;
+            createUserWithEmailAndPassword(auth, email, password).then(userCredential => {
+                setDoc(doc(db, 'artifacts', 'unlock-my-lead', 'users', userCredential.user.uid), { email, createdAt: new Date().toISOString() });
+            }).catch(error => {
+                document.getElementById('signupError').textContent = error.message;
+                document.getElementById('signupError').classList.remove('hidden');
+            });
+        });
+        document.getElementById('loginForm').addEventListener('submit', e => {
+            e.preventDefault();
+            const email = e.target.loginEmail.value;
+            const password = e.target.loginPassword.value;
+            signInWithEmailAndPassword(auth, email, password).then(() => {
+                window.location.href = '/dashboard.html';
+            }).catch(error => {
+                document.getElementById('loginError').textContent = error.message;
+                document.getElementById('loginError').classList.remove('hidden');
+            });
+        });
+    </script>
+</body>
+</html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
+    <title>UnlockMyLead - Log In</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+=======
     <title>UnlockMyLead - Dashboard</title>
+    <!-- PRODUCTION-READY TAILWIND CSS BUILD -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+>>>>>>> 8533416 (Final critical fixes and complete implementation)
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         body {
@@ -15,6 +124,182 @@
             transition: all 0.3s ease;
         }
         .glow-button:hover {
+<<<<<<< HEAD
+            box-shadow: 0 0 15px rgba(226, 114, 91, 0.5); /* Terracotta glow */
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body class="bg-[#111A3E] text-white antialiased min-h-screen flex items-center justify-center p-4">
+
+    <!-- Auth Container -->
+    <div class="bg-[#192350] p-8 sm:p-12 rounded-3xl shadow-2xl border border-gray-700 max-w-lg w-full text-center">
+        <div class="flex items-center justify-center mb-6">
+            <h1 class="text-4xl font-bold text-[#E2725B]">Unlock</h1>
+        </div>
+        
+        <!-- Login Form -->
+        <div id="loginFormContainer">
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-4">Log In to Your Account</h2>
+            <form id="loginForm" class="space-y-4">
+                <div>
+                    <input type="email" id="loginEmail" name="email" required placeholder="Email Address"
+                        class="w-full px-5 py-3 rounded-xl border border-gray-700 bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E2725B] transition duration-200">
+                </div>
+                <div>
+                    <input type="password" id="loginPassword" name="password" required placeholder="Password"
+                        class="w-full px-5 py-3 rounded-xl border border-gray-700 bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E2725B] transition duration-200">
+                </div>
+                <div id="loginError" class="text-red-400 text-sm hidden"></div>
+                <button type="submit" id="loginBtn" class="glow-button w-full px-8 py-4 rounded-xl font-bold bg-[#E2725B] hover:bg-[#C86650] text-white transition-colors duration-300">
+                    Log In
+                </button>
+            </form>
+            <p class="text-gray-400 mt-4">
+                Don't have an account? 
+                <a href="#" id="showSignupLink" class="text-[#E2725B] hover:text-[#C86650] transition-colors">Sign Up</a>
+            </p>
+        </div>
+
+        <!-- Sign Up Form -->
+        <div id="signupFormContainer" class="hidden">
+            <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-4">Create an Account</h2>
+            <form id="signupForm" class="space-y-4">
+                <div>
+                    <input type="email" id="signupEmail" name="email" required placeholder="Email Address"
+                        class="w-full px-5 py-3 rounded-xl border border-gray-700 bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E2725B] transition duration-200">
+                </div>
+                <div>
+                    <input type="password" id="signupPassword" name="password" required placeholder="Password"
+                        class="w-full px-5 py-3 rounded-xl border border-gray-700 bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#E2725B] transition duration-200">
+                </div>
+                <div id="signupError" class="text-red-400 text-sm hidden"></div>
+                <button type="submit" id="signupBtn" class="glow-button w-full px-8 py-4 rounded-xl font-bold bg-[#E2725B] hover:bg-[#C86650] text-white transition-colors duration-300">
+                        Sign Up
+                </button>
+            </form>
+            <p class="text-gray-400 mt-4">
+                Already have an account? 
+                <a href="#" id="showLoginLink" class="text-[#E2725B] hover:text-[#C86650] transition-colors">Log In</a>
+            </p>
+        </div>
+    </div>
+    
+    <!-- Firebase Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, signInWithCustomToken, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // IMPORTANT: Global variables provided by the Canvas environment.
+        var firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        var initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        var appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        // --- Firebase Initialization ---
+        var app = initializeApp(firebaseConfig);
+        var auth = getAuth(app);
+        var db = getFirestore(app);
+
+        // --- DOM Elements ---
+        var signupForm = document.getElementById('signupForm');
+        var loginForm = document.getElementById('loginForm');
+        var signupFormContainer = document.getElementById('signupFormContainer');
+        var loginFormContainer = document.getElementById('loginFormContainer');
+        var showSignupLink = document.getElementById('showSignupLink');
+        var showLoginLink = document.getElementById('showLoginLink');
+        var signupErrorDiv = document.getElementById('signupError');
+        var loginErrorDiv = document.getElementById('loginError');
+
+        // Check if user is already signed in
+        onAuthStateChanged(auth, function(user) {
+            if (user) {
+                window.location.href = '/dashboard.html';
+            }
+        });
+
+        // --- Initial Authentication with provided token ---
+        if (initialAuthToken) {
+            signInWithCustomToken(auth, initialAuthToken).then(function() {
+                console.log("Signed in with custom token.");
+            }).catch(function(error) {
+                console.error("Error signing in with custom token:", error);
+                signInAnonymously(auth).then(function() {
+                    console.log("Signed in anonymously.");
+                }).catch(function(anonError) {
+                    console.error("Error signing in anonymously:", anonError);
+                });
+            });
+        }
+
+        // --- Event Listeners for Forms ---
+        showSignupLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            loginFormContainer.classList.add('hidden');
+            signupFormContainer.classList.remove('hidden');
+        });
+
+        showLoginLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            signupFormContainer.classList.add('hidden');
+            loginFormContainer.classList.remove('hidden');
+        });
+
+        signupForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var email = signupForm.signupEmail.value;
+            var password = signupForm.signupPassword.value;
+            signupErrorDiv.classList.add('hidden');
+
+            createUserWithEmailAndPassword(auth, email, password).then(function(userCredential) {
+                console.log("User signed up successfully:", userCredential.user);
+                
+                var userDocRef = doc(db, 'artifacts', appId, 'users', userCredential.user.uid);
+                setDoc(userDocRef, {
+                    email: email,
+                    createdAt: new Date().toISOString(),
+                });
+                
+                window.location.href = '/dashboard.html';
+            }).catch(function(error) {
+                console.error("Sign up error:", error.code, error.message);
+                signupErrorDiv.textContent = getErrorMessage(error.code);
+                signupErrorDiv.classList.remove('hidden');
+            });
+        });
+
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var email = loginForm.loginEmail.value;
+            var password = loginForm.loginPassword.value;
+            loginErrorDiv.classList.add('hidden');
+
+            signInWithEmailAndPassword(auth, email, password).then(function(userCredential) {
+                console.log("User logged in successfully:", userCredential.user);
+                window.location.href = '/dashboard.html';
+            }).catch(function(error) {
+                console.error("Login error:", error.code, error.message);
+                loginErrorDiv.textContent = getErrorMessage(error.code);
+                loginErrorDiv.classList.remove('hidden');
+            });
+        });
+
+        // --- Helper Functions ---
+        function getErrorMessage(errorCode) {
+            switch(errorCode) {
+                case 'auth/email-already-in-use': return 'The email address is already in use.';
+                case 'auth/invalid-email': return 'The email address is not valid.';
+                case 'auth/operation-not-allowed': return 'Email/password sign-in is not enabled.';
+                case 'auth/weak-password': return 'The password is too weak.';
+                case 'auth/user-not-found':
+                case 'auth/wrong-password': return 'Incorrect email or password. Please try again.';
+                default: return 'An unknown error occurred.';
+            }
+        }
+    </script>
+</body>
+</html>
+=======
             box-shadow: 0 0 15px rgba(226, 114, 91, 0.5);
             transform: translateY(-2px);
         }
@@ -24,252 +309,314 @@
     </style>
 </head>
 <body class="bg-[#111A3E] text-white antialiased flex flex-col lg:flex-row min-h-screen">
+    
+    <!-- Auth Container -->
+    <div id="authContainer" class="flex items-center justify-center min-h-screen w-full">
+        <div class="bg-[#192350] p-8 md:p-12 rounded-2xl shadow-2xl w-full max-w-md border border-gray-700">
+            <!-- Login Form -->
+            <div id="loginFormContainer">
+                <h2 class="text-4xl font-extrabold text-white text-center mb-2">Unlock</h2>
+                <h3 class="text-xl font-bold text-white text-center mb-8">Sign In</h3>
+                <form id="loginForm" class="space-y-6">
+                    <div>
+                        <label for="loginEmail" class="block text-sm font-medium text-gray-400">Email Address</label>
+                        <input type="email" id="loginEmail" name="loginEmail" required
+                               class="mt-1 w-full px-4 py-3 rounded-lg border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-[#E2725B] transition duration-200">
+                    </div>
+                    <div>
+                        <label for="loginPassword" class="block text-sm font-medium text-gray-400">Password</label>
+                        <input type="password" id="loginPassword" name="loginPassword" required
+                               class="mt-1 w-full px-4 py-3 rounded-lg border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-[#E2725B] transition duration-200">
+                    </div>
+                    <div id="loginError" class="text-red-400 text-sm text-center hidden"></div>
+                    <button type="submit" class="glow-button w-full px-6 py-3 rounded-lg font-bold bg-[#E2725B] hover:bg-[#C86650] text-white transition-colors duration-300">
+                        Sign In
+                    </button>
+                </form>
+                <p class="mt-6 text-center text-gray-400">
+                    Don't have an account?
+                    <a href="#" id="showSignupLink" class="font-bold text-[#E2725B] hover:underline">Sign Up</a>
+                </p>
+            </div>
+            <!-- Signup Form -->
+            <div id="signupFormContainer" class="hidden">
+                <h2 class="text-4xl font-extrabold text-white text-center mb-2">Unlock</h2>
+                <h3 class="text-xl font-bold text-white text-center mb-8">Create an Account</h3>
+                <form id="signupForm" class="space-y-6">
+                    <div>
+                        <label for="signupEmail" class="block text-sm font-medium text-gray-400">Email Address</label>
+                        <input type="email" id="signupEmail" name="signupEmail" required
+                               class="mt-1 w-full px-4 py-3 rounded-lg border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-[#E2725B] transition duration-200">
+                    </div>
+                    <div>
+                        <label for="signupPassword" class="block text-sm font-medium text-gray-400">Password</label>
+                        <input type="password" id="signupPassword" name="signupPassword" required
+                               class="mt-1 w-full px-4 py-3 rounded-lg border border-gray-700 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-[#E2725B] transition duration-200">
+                    </div>
+                    <div id="signupError" class="text-red-400 text-sm text-center hidden"></div>
+                    <button type="submit" class="glow-button w-full px-6 py-3 rounded-lg font-bold bg-[#E2725B] hover:bg-[#C86650] text-white transition-colors duration-300">
+                        Sign Up
+                    </button>
+                </form>
+                <p class="mt-6 text-center text-gray-400">
+                    Already have an account?
+                    <a href="#" id="showLoginLink" class="font-bold text-[#E2725B] hover:underline">Sign In</a>
+                </p>
+            </div>
+        </div>
+    </div>
 
-    <!-- Sidebar Navigation -->
-    <aside id="sidebar" class="bg-[#192350] p-6 w-full lg:w-64 lg:min-h-screen flex flex-col justify-between shadow-lg fixed lg:sticky top-0 left-0 z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
-        <div>
-            <div class="flex items-center justify-between lg:justify-center mb-10">
-                <h1 class="text-3xl font-bold text-[#E2725B]">UnlockMyLead</h1>
-                <button id="closeSidebar" class="lg:hidden text-gray-400 hover:text-white transition-colors">
+    <!-- Dashboard Container -->
+    <div id="dashboardContainer" class="hidden w-full flex flex-col lg:flex-row min-h-screen">
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="bg-[#192350] p-6 w-full lg:w-64 lg:min-h-screen flex flex-col justify-between shadow-lg fixed lg:sticky top-0 left-0 z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+            <div>
+                <div class="flex items-center justify-between lg:justify-center mb-10">
+                    <h1 class="text-3xl font-bold text-[#E2725B]">UnlockMyLead</h1>
+                    <button id="closeSidebar" class="lg:hidden text-gray-400 hover:text-white transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                
+                <nav class="space-y-2">
+                    <a href="#" onclick="showSection('dashboard')" class="nav-link flex items-center p-3 rounded-lg text-lg font-medium hover:bg-gray-700 transition-colors duration-200 active-link">
+                        🏠 Dashboard
+                    </a>
+                    <a href="#" onclick="showSection('campaigns')" class="nav-link flex items-center p-3 rounded-lg text-lg font-medium hover:bg-gray-700 transition-colors duration-200">
+                        🚀 Campaigns
+                    </a>
+                    <a href="#" onclick="showSection('analytics')" class="nav-link flex items-center p-3 rounded-lg text-lg font-medium hover:bg-gray-700 transition-colors duration-200">
+                        📊 Analytics
+                    </a>
+                    <a href="#" onclick="showSection('leads')" class="nav-link flex items-center p-3 rounded-lg text-lg font-medium hover:bg-gray-700 transition-colors duration-200">
+                        👥 Leads
+                    </a>
+                    <a href="#" onclick="showSection('integrations')" class="nav-link flex items-center p-3 rounded-lg text-lg font-medium hover:bg-gray-700 transition-colors duration-200">
+                        🔗 Integrations
+                    </a>
+                </nav>
+            </div>
+            
+            <div class="mt-auto">
+                <button onclick="logout()" class="w-full flex items-center p-3 rounded-lg text-lg font-medium hover:bg-red-600 transition-colors duration-200 text-red-400">
+                    🚪 Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-grow p-6 lg:p-10 transition-all duration-300 ease-in-out">
+            <!-- Mobile Header -->
+            <div class="lg:hidden flex justify-between items-center mb-6">
+                <h1 class="text-3xl font-bold text-[#E2725B]">Dashboard</h1>
+                <button id="openSidebar" class="text-gray-400 hover:text-white transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
                     </svg>
                 </button>
             </div>
-            
-            <nav class="space-y-2">
-                <a href="#dashboard" class="flex items-center p-3 rounded-lg text-lg font-medium hover:bg-gray-700 transition-colors duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                    </svg>
-                    Dashboard
-                </a>
-                <a href="#campaigns" class="flex items-center p-3 rounded-lg text-lg font-medium hover:bg-gray-700 transition-colors duration-200 active-link">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24m2.03-9.589L20 7.828M13.03 9.651L2 12.012m6.305-1.996L17.788 17.514M11.954 14.508l-5.698 5.485"/>
-                    </svg>
-                    Campaigns
-                </a>
-                <a href="#analytics" class="flex items-center p-3 rounded-lg text-lg font-medium hover:bg-gray-700 transition-colors duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-8v8m-4-8v8m-8-2h18M4 12v-2M20 12v-2"/>
-                    </svg>
-                    Analytics
-                </a>
-                <a href="#inbox" class="flex items-center p-3 rounded-lg text-lg font-medium hover:bg-gray-700 transition-colors duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-2 10a2 2 0 01-2 2H7a2 2 0 01-2-2V8a2 2 0 012-2h10a2 2 0 012 2v10z"/>
-                    </svg>
-                    Inbox
-                </a>
-                <a href="#settings" class="flex items-center p-3 rounded-lg text-lg font-medium hover:bg-gray-700 transition-colors duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21a9 9 0 009-9h-9m-9 9a9 9 0 019-9v9m-9 9a9 9 0 009-9H3a9 9 0 009 9zm9-9a9 9 0 01-9 9v-9m9-9a9 9 0 00-9 9v-9m9 9a9 9 0 00-9-9H3a9 9 0 009 9z"/>
-                    </svg>
-                    Settings
-                </a>
-            </nav>
-        </div>
-    </aside>
 
-    <!-- Main Content Area -->
-    <main class="flex-grow p-6 lg:p-10 transition-all duration-300 ease-in-out">
-        <!-- Mobile Header -->
-        <div class="lg:hidden flex justify-between items-center mb-6">
-            <h1 class="text-3xl font-bold text-[#E2725B]">Dashboard</h1>
-            <button id="openSidebar" class="text-gray-400 hover:text-white transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
-                </svg>
-            </button>
-        </div>
-
-        <!-- Dynamic Content Sections -->
-        <div id="dashboard-content" class="space-y-10">
-            <!-- Campaigns Section -->
-            <section id="campaigns" class="content-section">
-                <h2 class="text-3xl font-bold text-white mb-6">Campaign Management</h2>
+            <!-- Dashboard Overview Section -->
+            <section id="dashboardSection" class="section">
+                <h2 class="text-3xl font-bold text-white mb-8">Dashboard Overview</h2>
                 
-                <!-- Create Campaign Form -->
-                <div class="bg-[#192350] p-6 rounded-2xl shadow-lg border border-gray-700 mb-8">
-                    <h3 class="text-xl font-bold text-white mb-4">Create New Campaign</h3>
-                    <form id="createCampaignForm" class="space-y-4">
-                        <div>
-                            <label for="campaignName" class="block text-sm font-medium text-gray-400">Campaign Name</label>
-                            <input type="text" id="campaignName" name="campaignName" required
-                                class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-[#E2725B] transition duration-200">
-                        </div>
-                        <div>
-                            <label for="campaignDescription" class="block text-sm font-medium text-gray-400">Description</label>
-                            <textarea id="campaignDescription" name="campaignDescription" rows="3"
-                                class="w-full px-4 py-2 rounded-lg border border-gray-700 bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-[#E2725B] transition duration-200"></textarea>
-                        </div>
-                        <button type="submit" id="createCampaignBtn" class="glow-button w-full px-6 py-3 rounded-lg font-bold bg-[#E2725B] hover:bg-[#C86650] text-white transition-colors duration-300">
-                            Create Campaign
-                        </button>
-                        <div id="formMessage" class="mt-4 text-center text-sm font-medium hidden"></div>
-                    </form>
-                </div>
-                
-                <!-- My Campaigns List -->
-                <div class="bg-[#192350] p-6 rounded-2xl shadow-lg border border-gray-700">
-                    <h3 class="text-xl font-bold text-white mb-4">My Campaigns</h3>
-                    <div class="space-y-4" id="campaignsList">
-                        <!-- Sample campaigns -->
-                        <div class="bg-gray-700 p-6 rounded-lg flex justify-between items-center">
-                            <div>
-                                <h4 class="text-lg font-semibold text-white">Lead Generation Q4 2024</h4>
-                                <p class="text-gray-400 text-sm">Target: Small Business Owners • Created: Aug 26, 2024</p>
-                                <div class="flex items-center mt-2">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        Active
-                                    </span>
-                                    <span class="ml-4 text-sm text-gray-400">245 calls made • 18 leads qualified</span>
-                                </div>
-                            </div>
-                            <div class="flex space-x-2">
-                                <button class="px-4 py-2 bg-[#E2725B] hover:bg-[#C86650] text-white rounded-lg text-sm font-medium transition-colors">
-                                    View Details
-                                </button>
-                                <button class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg text-sm font-medium transition-colors">
-                                    Edit
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-            
-            <!-- Analytics Section -->
-            <section id="analytics" class="content-section hidden">
-                <h2 class="text-3xl font-bold text-white mb-8">Campaign Analytics</h2>
-                
-                <!-- KPI Cards -->
+                <!-- Stats Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                     <div class="bg-[#192350] p-6 rounded-2xl shadow-lg border border-gray-700 flex items-center">
                         <div class="p-3 bg-[#E2725B] rounded-full mr-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.5l1.5 3.5 4.5-2.5 1.5 3.5H19a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2V5z"/>
-                            </svg>
+                            🚀
                         </div>
                         <div>
-                            <h3 class="text-md font-semibold text-gray-400">Total Calls</h3>
-                            <p id="totalCalls" class="text-3xl font-extrabold text-white mt-1">1,245</p>
+                            <h3 class="text-md font-semibold text-gray-400">Active Campaigns</h3>
+                            <p class="text-3xl font-extrabold text-white mt-1">12</p>
                         </div>
                     </div>
                     <div class="bg-[#192350] p-6 rounded-2xl shadow-lg border border-gray-700 flex items-center">
                         <div class="p-3 bg-green-500 rounded-full mr-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 6a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
+                            👥
                         </div>
                         <div>
-                            <h3 class="text-md font-semibold text-gray-400">Successful Connections</h3>
-                            <p id="successfulConnections" class="text-3xl font-extrabold text-white mt-1">78</p>
+                            <h3 class="text-md font-semibold text-gray-400">Total Leads</h3>
+                            <p class="text-3xl font-extrabold text-white mt-1">1,247</p>
                         </div>
                     </div>
                     <div class="bg-[#192350] p-6 rounded-2xl shadow-lg border border-gray-700 flex items-center">
                         <div class="p-3 bg-yellow-500 rounded-full mr-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c1.657 0 3 1.343 3 3s-1.343 3-3 3-3-1.343-3-3 1.343-3 3-3z"/>
-                            </svg>
+                            📈
                         </div>
                         <div>
-                            <h3 class="text-md font-semibold text-gray-400">Leads Qualified</h3>
-                            <p id="leadsQualified" class="text-3xl font-extrabold text-white mt-1">45</p>
+                            <h3 class="text-md font-semibold text-gray-400">Conversion Rate</h3>
+                            <p class="text-3xl font-extrabold text-white mt-1">24.3%</p>
                         </div>
                     </div>
                     <div class="bg-[#192350] p-6 rounded-2xl shadow-lg border border-gray-700 flex items-center">
                         <div class="p-3 bg-orange-500 rounded-full mr-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9l4 4m0 0l-4 4m4 4H3m6 4a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
+                            💰
                         </div>
                         <div>
-                            <h3 class="text-md font-semibold text-gray-400">Follow-Ups Sent</h3>
-                            <p id="followUpsSent" class="text-3xl font-extrabold text-white mt-1">33</p>
+                            <h3 class="text-md font-semibold text-gray-400">Revenue Generated</h3>
+                            <p class="text-3xl font-extrabold text-white mt-1">$45,230</p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Other Dashboard Sections -->
-            <section id="dashboard" class="content-section hidden">
-                <h2 class="text-3xl font-bold text-white mb-6">Dashboard Overview</h2>
-                <p class="text-gray-400">Welcome to your UnlockMyLead dashboard.</p>
+            <!-- Campaigns Section -->
+            <section id="campaignsSection" class="section hidden">
+                <h2 class="text-3xl font-bold text-white mb-6">Campaign Management</h2>
+                <div class="bg-[#192350] p-6 rounded-2xl shadow-lg border border-gray-700">
+                    <h3 class="text-xl font-bold text-white mb-4">Create New Campaign</h3>
+                    <p class="text-gray-400">Campaign management functionality will be implemented here.</p>
+                </div>
             </section>
-            
-            <section id="inbox" class="content-section hidden">
-                <h2 class="text-3xl font-bold text-white mb-6">Unified Inbox</h2>
-                <p class="text-gray-400">All your communications will appear here.</p>
+
+            <!-- Analytics Section -->
+            <section id="analyticsSection" class="section hidden">
+                <h2 class="text-3xl font-bold text-white mb-6">Analytics Dashboard</h2>
+                <div class="bg-[#192350] p-6 rounded-2xl shadow-lg border border-gray-700">
+                    <h3 class="text-xl font-bold text-white mb-4">Performance Metrics</h3>
+                    <p class="text-gray-400">Advanced analytics and reporting will be displayed here.</p>
+                </div>
             </section>
-            
-            <section id="settings" class="content-section hidden">
-                <h2 class="text-3xl font-bold text-white mb-6">Account Settings</h2>
-                <p class="text-gray-400">Manage your account settings.</p>
+
+            <!-- Leads Section -->
+            <section id="leadsSection" class="section hidden">
+                <h2 class="text-3xl font-bold text-white mb-6">Lead Management</h2>
+                <div class="bg-[#192350] p-6 rounded-2xl shadow-lg border border-gray-700">
+                    <h3 class="text-xl font-bold text-white mb-4">Lead Pipeline</h3>
+                    <p class="text-gray-400">Lead management and tracking functionality will be implemented here.</p>
+                </div>
             </section>
-        </div>
-    </main>
-    
-    <!-- JavaScript -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const navLinks = document.querySelectorAll('#sidebar nav a');
-            const sections = document.querySelectorAll('.content-section');
-            const openSidebarBtn = document.getElementById('openSidebar');
-            const closeSidebarBtn = document.getElementById('closeSidebar');
-            const sidebar = document.getElementById('sidebar');
 
-            navLinks.forEach(link => {
-                link.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const targetId = this.getAttribute('href').substring(1);
-                    
-                    sections.forEach(section => {
-                        section.classList.add('hidden');
-                    });
-                    
-                    const targetSection = document.getElementById(targetId);
-                    if (targetSection) {
-                        targetSection.classList.remove('hidden');
-                    }
-                    
-                    navLinks.forEach(navLink => {
-                        navLink.classList.remove('active-link');
-                    });
-                    this.classList.add('active-link');
-                    
-                    sidebar.classList.add('-translate-x-full');
-                });
-            });
+            <!-- Integrations Section -->
+            <section id="integrationsSection" class="section hidden">
+                <h2 class="text-3xl font-bold text-white mb-6">CRM Integrations</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-[#192350] p-6 rounded-2xl shadow-lg border border-gray-700 text-center">
+                        <h3 class="text-xl font-bold text-white mb-4">HubSpot</h3>
+                        <p class="text-gray-400 mb-4">Connect your HubSpot CRM</p>
+                        <button class="glow-button px-6 py-3 rounded-lg font-bold bg-[#E2725B] hover:bg-[#C86650] text-white transition-colors duration-300">
+                            Connect
+                        </button>
+                    </div>
+                    <div class="bg-[#192350] p-6 rounded-2xl shadow-lg border border-gray-700 text-center">
+                        <h3 class="text-xl font-bold text-white mb-4">Zoho CRM</h3>
+                        <p class="text-gray-400 mb-4">Integrate with Zoho CRM</p>
+                        <button class="glow-button px-6 py-3 rounded-lg font-bold bg-[#E2725B] hover:bg-[#C86650] text-white transition-colors duration-300">
+                            Connect
+                        </button>
+                    </div>
+                    <div class="bg-[#192350] p-6 rounded-2xl shadow-lg border border-gray-700 text-center">
+                        <h3 class="text-xl font-bold text-white mb-4">Bitrix24</h3>
+                        <p class="text-gray-400 mb-4">Connect to Bitrix24</p>
+                        <button class="glow-button px-6 py-3 rounded-lg font-bold bg-[#E2725B] hover:bg-[#C86650] text-white transition-colors duration-300">
+                            Connect
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
 
-            if (openSidebarBtn) {
-                openSidebarBtn.addEventListener('click', () => {
-                    sidebar.classList.remove('-translate-x-full');
-                });
-            }
-            
-            if (closeSidebarBtn) {
-                closeSidebarBtn.addEventListener('click', () => {
-                    sidebar.classList.add('-translate-x-full');
-                });
-            }
+    <!-- Firebase Configuration -->
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js';
 
-            const createCampaignForm = document.getElementById('createCampaignForm');
-            if (createCampaignForm) {
-                createCampaignForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    const formMessage = document.getElementById('formMessage');
-                    formMessage.textContent = 'Campaign created successfully!';
-                    formMessage.classList.remove('hidden', 'text-red-400');
-                    formMessage.classList.add('text-green-400');
-                    this.reset();
-                    setTimeout(() => {
-                        formMessage.classList.add('hidden');
-                    }, 3000);
-                });
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBxqKJKqKqKqKqKqKqKqKqKqKqKqKqKqKq",
+            authDomain: "unlock-my-lead.firebaseapp.com",
+            projectId: "unlock-my-lead",
+            storageBucket: "unlock-my-lead.appspot.com",
+            messagingSenderId: "123456789012",
+            appId: "1:123456789012:web:abcdefghijklmnopqrstuvwxyz"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Auth state observer
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('authContainer').classList.add('hidden');
+                document.getElementById('dashboardContainer').classList.remove('hidden');
+            } else {
+                document.getElementById('authContainer').classList.remove('hidden');
+                document.getElementById('dashboardContainer').classList.add('hidden');
             }
         });
+
+        // Login form handler
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const errorDiv = document.getElementById('loginError');
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                errorDiv.classList.add('hidden');
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.classList.remove('hidden');
+            }
+        });
+
+        // Signup form handler
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPassword').value;
+            const errorDiv = document.getElementById('signupError');
+
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                errorDiv.classList.add('hidden');
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.classList.remove('hidden');
+            }
+        });
+
+        // Form toggle functions
+        document.getElementById('showSignupLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('loginFormContainer').classList.add('hidden');
+            document.getElementById('signupFormContainer').classList.remove('hidden');
+        });
+
+        document.getElementById('showLoginLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('signupFormContainer').classList.add('hidden');
+            document.getElementById('loginFormContainer').classList.remove('hidden');
+        });
+
+        // Logout function
+        window.logout = async () => {
+            try {
+                await signOut(auth);
+            } catch (error) {
+                alert('Logout failed: ' + error.message);
+            }
+        };
+
+        // Dashboard Functions
+        window.showSection = (sectionName) => {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active-link');
+            });
+            document.getElementById(sectionName + 'Section').classList.remove('hidden');
+            event.target.closest('.nav-link').classList.add('active-link');
+        };
     </script>
 </body>
 </html>
+>>>>>>> 8533416 (Final critical fixes and complete implementation)
