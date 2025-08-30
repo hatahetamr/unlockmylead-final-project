@@ -1,0 +1,25 @@
+{
+  "name": "unlockmylead-final-project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hatahetamr/unlockmylead-final-project.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hatahetamr/unlockmylead-final-project/issues"
+  },
+  "homepage": "https://github.com/hatahetamr/unlockmylead-final-project#readme",
+  "description": "",
+  "dependencies": {
+    "axios": "^1.11.0",
+    "firebase-admin": "^13.5.0",
+    "twilio": "^5.8.2"
+  }
+}
