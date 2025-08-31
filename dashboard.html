@@ -3,280 +3,128 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unlock My Lead - Dashboard</title>
+    <title>UnlockMyLead Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            color: #111A3E;
         }
-        
-        .header {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 1rem 2rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #667eea;
-        }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 2rem;
-        }
-        
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-        
-        .card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            transition: transform 0.3s ease;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .card h3 {
-            color: #667eea;
-            margin-bottom: 1rem;
-            font-size: 1.3rem;
-        }
-        
-        .card p {
-            color: #666;
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
-        }
-        
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-        
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        
-        .stat-card {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 1.5rem;
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        }
-        
-        .stat-number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #667eea;
-        }
-        
-        .stat-label {
-            color: #666;
-            margin-top: 0.5rem;
-        }
-        
-        .welcome {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 2rem;
-            border-radius: 15px;
-            margin-bottom: 2rem;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-        }
-        
-        .ai-test-section {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 2rem;
-            border-radius: 15px;
-            margin-bottom: 2rem;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-        }
-        
-        .test-result {
-            margin-top: 1rem;
-            padding: 1rem;
-            border-radius: 8px;
-            background: #f8f9fa;
-            border-left: 4px solid #667eea;
-        }
+        .bg-navy-blue { background-color: #111A3E; }
+        .bg-terracotta { background-color: #E2725B; }
+        .text-navy-blue { color: #111A3E; }
+        .text-terracotta { color: #E2725B; }
+        .accent-border { border-color: #E2725B; }
     </style>
 </head>
-<body>
-    <div class="header">
-        <div class="logo">🔓 Unlock My Lead</div>
-        <div class="user-info">
-            <span>Welcome back!</span>
-            <button class="btn" onclick="logout()">Logout</button>
+<body class="flex min-h-screen">
+
+    <!-- Sidebar -->
+    <aside class="w-64 bg-navy-blue text-white p-6 space-y-6">
+        <div class="flex items-center space-x-2 mb-8">
+            <span class="text-3xl font-bold">UML</span>
+            <span class="text-xs text-white/50">v1.0</span>
         </div>
-    </div>
-    
-    <div class="container">
-        <div class="welcome">
-            <h2>Dashboard Overview</h2>
-            <p>Manage your AI-powered lead generation campaigns and track your success.</p>
-        </div>
-        
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-number">0</div>
-                <div class="stat-label">Active Campaigns</div>
+        <nav class="space-y-2">
+            <a href="#" class="flex items-center space-x-3 px-4 py-2 rounded-lg bg-terracotta text-white font-semibold">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M2 10a8 8 0 018-8v8h8a8 8 0 01-8 8v-8H2z" /><path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" /></svg>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-white/10 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v2a2 2 0 002 2h4a2 2 0 002-2v-2a2 2 0 002-2V7a5 5 0 00-5-5zm0 2a3 3 0 013 3v2a2 2 0 01-2 2H9a2 2 0 01-2-2V7a3 3 0 013-3z" clip-rule="evenodd" /></svg>
+                <span>Voice System</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-white/10 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.998 3.998 0 0118 15v3h-2zM4 18v-3a5.972 5.972 0 01.75-2.906A3.998 3.998 0 002 15v3h2z" /></svg>
+                <span>Lead Generation</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-white/10 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M14.707 12.293a1 1 0 010 1.414L11.414 17a1 1 0 01-1.414 0l-3.293-3.293a1 1 0 011.414-1.414l2 2V6a1 1 0 112 0v8.586l2-2a1 1 0 011.414 0z" clip-rule="evenodd" /></svg>
+                <span>Bulk Operations</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-white/10 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12.316 3.051a1 1 0 01.638.648l1.794 3.491a1 1 0 01-.397 1.343l-4.148 2.074a1 1 0 01-1.228-.621l-1.928-5.323A1 1 0 017.394 3.01l4.922.041zM3 13.5a1.5 1.5 0 011.5-1.5h.01a1.5 1.5 0 011.5 1.5v.01a1.5 1.5 0 01-1.5 1.5H4.5a1.5 1.5 0 01-1.5-1.5v-.01zM11 13.5a1.5 1.5 0 011.5-1.5h.01a1.5 1.5 0 011.5 1.5v.01a1.5 1.5 0 01-1.5 1.5H12.5a1.5 1.5 0 01-1.5-1.5v-.01zM7 13.5a1.5 1.5 0 011.5-1.5h.01a1.5 1.5 0 011.5 1.5v.01a1.5 1.5 0 01-1.5 1.5H8.5a1.5 1.5 0 01-1.5-1.5v-.01z" clip-rule="evenodd" /></svg>
+                <span>Analytics</span>
+            </a>
+            <a href="#" class="flex items-center space-x-3 px-4 py-2 rounded-lg hover:bg-white/10 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-1-8a1 1 0 000 2h2a1 1 0 100-2h-2z" clip-rule="evenodd" /></svg>
+                <span>Settings</span>
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold text-navy-blue">Dashboard</h1>
+            <div class="flex items-center space-x-4">
+                <button class="bg-terracotta text-white font-semibold py-2 px-4 rounded-lg shadow-md hover:bg-terracotta/90 transition-colors">Buy Credits</button>
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-gray-300 rounded-full"></div>
+                    <span class="text-sm font-semibold text-navy-blue">User Name</span>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number">0</div>
-                <div class="stat-label">Total Leads</div>
+        </header>
+
+        <!-- Quick Actions Panel -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold text-navy-blue mb-4">Quick Actions</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Placeholder for Bulk CSV Upload -->
+                <div class="bg-white p-6 rounded-lg shadow-md border-t-4 accent-border">
+                    <h3 class="text-lg font-bold text-navy-blue mb-2">Upload CSV</h3>
+                    <p class="text-sm text-gray-500">Import contacts for bulk campaigns.</p>
+                </div>
+                <!-- Placeholder for Voice System -->
+                <div class="bg-white p-6 rounded-lg shadow-md border-t-4 accent-border">
+                    <h3 class="text-lg font-bold text-navy-blue mb-2">Voice System</h3>
+                    <p class="text-sm text-gray-500">Choose from 100+ professional voices.</p>
+                </div>
+                <!-- Placeholder for Phone Numbers -->
+                <div class="bg-white p-6 rounded-lg shadow-md border-t-4 accent-border">
+                    <h3 class="text-lg font-bold text-navy-blue mb-2">Buy Number</h3>
+                    <p class="text-sm text-gray-500">Get a new dedicated phone number.</p>
+                </div>
+                <!-- Placeholder for Analytics -->
+                <div class="bg-white p-6 rounded-lg shadow-md border-t-4 accent-border">
+                    <h3 class="text-lg font-bold text-navy-blue mb-2">Analytics</h3>
+                    <p class="text-sm text-gray-500">Track total transfers and answer rates.</p>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number">0</div>
-                <div class="stat-label">Calls Made</div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold text-navy-blue mb-4">Analytics</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <div class="h-64 flex items-center justify-center text-gray-400">
+                    <p>Analytics dashboards will appear here.</p>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="stat-number">0%</div>
-                <div class="stat-label">Conversion Rate</div>
+        </section>
+
+        <!-- Features Section -->
+        <section>
+            <h2 class="text-xl font-semibold text-navy-blue mb-4">Features</h2>
+            <div class="bg-white p-6 rounded-lg shadow-md space-y-4">
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-bold text-lg text-navy-blue">Voice System</h3>
+                    <p class="text-sm text-gray-500">Placeholder for voice list, categories, and preview functionality.</p>
+                </div>
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-bold text-lg text-navy-blue">Pathways / Workflow</h3>
+                    <p class="text-sm text-gray-500">Placeholder for visual editor, branching logic, and AI generator.</p>
+                </div>
+                <div class="border rounded-lg p-4">
+                    <h3 class="font-bold text-lg text-navy-blue">Presets System</h3>
+                    <p class="text-sm text-gray-500">Placeholder for background information and custom fields.</p>
+                </div>
             </div>
-        </div>
-        
-        <div class="ai-test-section">
-            <h3>🤖 AI Calling System Test</h3>
-            <p>Test your AI calling functionality to ensure everything is working properly.</p>
-            <button class="btn" onclick="testAICalling()">Test AI Call Function</button>
-            <div id="testResult" class="test-result" style="display: none;">
-                <strong>Test Result:</strong> <span id="resultText"></span>
-            </div>
-        </div>
-        
-        <div class="dashboard-grid">
-            <div class="card">
-                <h3>📞 Campaign Management</h3>
-                <p>Create and manage your AI-powered calling campaigns. Set up target audiences, customize scripts, and track performance.</p>
-                <button class="btn" onclick="navigateTo('campaigns')">Manage Campaigns</button>
-            </div>
-            
-            <div class="card">
-                <h3>👥 Lead Management</h3>
-                <p>View and organize your leads. Track contact history, update lead status, and manage follow-ups.</p>
-                <button class="btn" onclick="navigateTo('leads')">View Leads</button>
-            </div>
-            
-            <div class="card">
-                <h3>📊 Analytics</h3>
-                <p>Analyze your campaign performance with detailed reports and insights to optimize your lead generation.</p>
-                <button class="btn" onclick="navigateTo('analytics')">View Analytics</button>
-            </div>
-            
-            <div class="card">
-                <h3>📧 Inbox</h3>
-                <p>Manage incoming messages and responses from your AI calling campaigns. Stay connected with your leads.</p>
-                <button class="btn" onclick="navigateTo('inbox')">Open Inbox</button>
-            </div>
-            
-            <div class="card">
-                <h3>⚙️ Settings</h3>
-                <p>Configure your account settings, API integrations, and customize your AI calling preferences.</p>
-                <button class="btn" onclick="navigateTo('settings')">Open Settings</button>
-            </div>
-            
-            <div class="card">
-                <h3>🔗 Integrations</h3>
-                <p>Connect with your favorite CRM tools, email platforms, and other business applications.</p>
-                <button class="btn" onclick="navigateTo('integrations')">Manage Integrations</button>
-            </div>
-        </div>
-    </div>
-    
-    <script>
-        function navigateTo(section) {
-            alert(`Navigating to ${section} - Feature coming soon!`);
-        }
-        
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                window.location.href = 'index.html';
-            }
-        }
-        
-        async function testAICalling() {
-            const resultDiv = document.getElementById('testResult');
-            const resultText = document.getElementById('resultText');
-            
-            resultDiv.style.display = 'block';
-            resultText.textContent = 'Testing AI calling function...';
-            
-            try {
-                const response = await fetch('/.netlify/functions/make-call', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        to: '+1234567890',
-                        message: 'This is a test call from Unlock My Lead platform.',
-                        test: true
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (response.ok) {
-                    resultText.textContent = `✅ AI calling system is working! ${result.message || 'Test successful'}`;
-                    resultDiv.style.borderLeftColor = '#28a745';
-                } else {
-                    resultText.textContent = `⚠️ Test completed with message: ${result.error || result.message || 'Unknown error'}`;
-                    resultDiv.style.borderLeftColor = '#ffc107';
-                }
-            } catch (error) {
-                resultText.textContent = `❌ Error testing AI calling: ${error.message}`;
-                resultDiv.style.borderLeftColor = '#dc3545';
-            }
-        }
-        
-        // Initialize dashboard
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('Dashboard loaded successfully');
-        });
-    </script>
+        </section>
+
+    </main>
 </body>
 </html>
