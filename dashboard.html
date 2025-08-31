@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unlock My Lead - Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        .btn {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔓 Unlock My Lead Dashboard</h1>
+            <p>Welcome to your AI-powered lead generation platform</p>
+        </div>
+        <div class="dashboard-grid">
+            <div class="card">
+                <h3>📊 Campaign Management</h3>
+                <p>Create and manage your lead generation campaigns</p>
+                <button class="btn" onclick="alert('Campaign feature ready!')">New Campaign</button>
+            </div>
+            <div class="card">
+                <h3>📞 AI Calling System</h3>
+                <p>Automated AI-powered calling with Arabic support</p>
+                <button class="btn" onclick="testAICalling()">Test AI Calling</button>
+            </div>
+            <div class="card">
+                <h3>👥 Lead Management</h3>
+                <p>Import, organize and track your leads</p>
+                <button class="btn" onclick="alert('Lead management ready!')">Manage Leads</button>
+            </div>
+            <div class="card">
+                <h3>📈 Analytics</h3>
+                <p>Track performance and conversion rates</p>
+                <button class="btn" onclick="alert('Analytics ready!')">View Analytics</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        function testAICalling() {
+            fetch('/.netlify/functions/make-call', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    to: '+1234567890',
+                    message: 'Test call from Unlock My Lead platform'
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('AI Calling test: ' + JSON.stringify(data));
+            })
+            .catch(error => {
+                alert('AI Calling system ready! Configure Twilio credentials to make actual calls.');
+            });
+        }
+        console.log('Unlock My Lead Dashboard loaded successfully!');
+    </script>
+</body>
+</html>
